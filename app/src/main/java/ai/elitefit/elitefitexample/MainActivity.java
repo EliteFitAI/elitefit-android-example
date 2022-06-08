@@ -33,8 +33,8 @@ public class MainActivity extends ElitePoseActivity {
     /**
      * Add your API_KEY & API_SECRET
      * */
-    private final String API_KEY = "H56A294-C1M4KH7-NMATW5N-EQWDF0G";
-    private final String API_SECRET = "894ca124-6068-49c4-ad15-ae1675f8d782";
+    private final String API_KEY = "";
+    private final String API_SECRET = "";
     private final String API_URL = "https://elitefitforyou.com/api/";
 
     /**
