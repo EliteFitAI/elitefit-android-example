@@ -1,0 +1,3 @@
+include ':ef-pose'
+include ':app'
+rootProject.name = "EliteFit Anroid Example"
