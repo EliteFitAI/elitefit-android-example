@@ -1,9 +1,11 @@
 package ai.elitefit.elitefitexample;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
@@ -177,6 +179,10 @@ public class MainActivity extends ElitePoseActivity {
             @Override
             public void onSuccess(String sessionId) {
                 textView.setText("Session ID: " + sessionId);
+                /*
+                 * Set user weight to calculate calories burned
+                 * */
+                setUserWeightKg(77);
                 /*
                  * startWorkout will start the workout
                  * */
