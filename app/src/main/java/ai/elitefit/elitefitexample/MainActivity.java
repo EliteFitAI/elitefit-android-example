@@ -79,7 +79,6 @@ public class MainActivity extends ElitePoseActivity {
             @Override
             public void onSuccess(AccessTokenResponse response) {
                 loadVideo(VIDEO_ID);
-                createSession(VIDEO_ID);
             }
             @Override
             public void onError(String error) {
@@ -157,6 +156,12 @@ public class MainActivity extends ElitePoseActivity {
         service.getVideoById(videoId, new IDataResponse<Video>() {
             @Override
             public void onSuccess(Video response) {
+
+               /*
+                * Create a new workout session and start the workout
+                * */
+                createSession(response);
+
                 youTubePlayerView.getYouTubePlayerWhenReady(player -> {
                     player.loadVideo(response.getEmbedId(), 0);
                     youTubePlayer = player;
@@ -173,8 +178,8 @@ public class MainActivity extends ElitePoseActivity {
         });
     }
 
-    private void createSession(int videoId) {
-        service.createSession(videoId, new IDataResponse<String>() {
+    private void createSession(Video video) {
+        service.createSession(video.getId(), new IDataResponse<String>() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onSuccess(String sessionId) {
@@ -186,7 +191,7 @@ public class MainActivity extends ElitePoseActivity {
                 /*
                  * startWorkout will start the workout
                  * */
-                startWorkout(sessionId, videoId);
+                startWorkout(sessionId, video);
             }
 
             @SuppressLint("SetTextI18n")
