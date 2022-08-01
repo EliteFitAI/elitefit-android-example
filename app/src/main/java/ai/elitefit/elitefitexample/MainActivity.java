@@ -1,11 +1,9 @@
 package ai.elitefit.elitefitexample;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
@@ -42,10 +40,10 @@ public class MainActivity extends ElitePoseActivity {
     /**
      * Add your EliteFit VIDEO_ID
      * */
-    private final int VIDEO_ID = 431;
+    private final int VIDEO_ID = 0;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
 
@@ -91,7 +89,7 @@ public class MainActivity extends ElitePoseActivity {
      * @return return your activity layout ID
      * */
     @Override
-    protected int getContentViewId() {
+    public int getContentViewId() {
         return R.layout.activity_main;
     }
 
@@ -99,7 +97,7 @@ public class MainActivity extends ElitePoseActivity {
      * @return service object
      * */
     @Override
-    protected OperatorService getService() {
+    public OperatorService getService() {
         return service;
     }
 
@@ -107,7 +105,7 @@ public class MainActivity extends ElitePoseActivity {
      * @return current time in seconds preferably with 4 digit decimal
      * */
     @Override
-    protected double getCurrentTime() {
+    public double getCurrentTime() {
         if (tracker != null) {
             return tracker.getCurrentSecond();
         }
@@ -118,7 +116,7 @@ public class MainActivity extends ElitePoseActivity {
      * @return if trainer video is playing or not, You will only get accuracy when video is playing
      * */
     @Override
-    protected boolean isVideoPlaying() {
+    public boolean isVideoPlaying() {
         if (tracker != null) {
             return (tracker.getState() == PlayerConstants.PlayerState.PLAYING);
         }
@@ -130,7 +128,7 @@ public class MainActivity extends ElitePoseActivity {
      * */
     @SuppressLint("SetTextI18n")
     @Override
-    protected void onResult(UploadPoseResponse response) {
+    public void onResult(UploadPoseResponse response) {
         try {
             String avgAccStr = response.getAvgAccuracy();
             String avgAcc = Integer.valueOf(Double.valueOf(avgAccStr).intValue()).toString();
@@ -146,7 +144,7 @@ public class MainActivity extends ElitePoseActivity {
      * This function will get called every if user comes in or goes out of frame
      * */
     @Override
-    protected void onVisibilityChange(boolean isVisible) {
+    public void onVisibilityChange(boolean isVisible) {
         String msg = isVisible ? "User in Frame" : "User not in Frame";
         Log.v(TAG, msg);
         visibleTextView.setText(msg);
