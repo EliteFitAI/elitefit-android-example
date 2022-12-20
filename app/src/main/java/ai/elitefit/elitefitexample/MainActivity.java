@@ -3,8 +3,12 @@ package ai.elitefit.elitefitexample;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker;
@@ -30,6 +34,9 @@ public class MainActivity extends ElitePoseActivity {
     private YouTubePlayerView youTubePlayerView;
     private YouTubePlayerTracker tracker;
 
+    private ExoPlayer player;
+    private StyledPlayerView playerView;
+
     /**
      * Add your API_KEY & API_SECRET
      * */
@@ -40,7 +47,10 @@ public class MainActivity extends ElitePoseActivity {
     /**
      * Add your EliteFit VIDEO_ID
      * */
-    private final int VIDEO_ID = 0;
+    private final int VIDEO_ID = 2393;
+    private final String VIDEO_URL = "https://s3.ap-southeast-1.amazonaws.com/www.elitefit.ai/Ice+Skaters.mp4";
+
+    private final boolean useYoutube = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,8 +67,17 @@ public class MainActivity extends ElitePoseActivity {
          * */
         startRendering(R.id.elite_pose_layout);
 
-        youTubePlayerView = findViewById(R.id.youtube_player_view);
-        getLifecycle().addObserver(youTubePlayerView);
+        if (useYoutube) {
+            youTubePlayerView = findViewById(R.id.youtube_player_view);
+            youTubePlayerView.setVisibility(View.VISIBLE);
+            getLifecycle().addObserver(youTubePlayerView);
+        }
+        else {
+            playerView = findViewById(R.id.exo_player);
+            playerView.setVisibility(View.VISIBLE);
+            player = new ExoPlayer.Builder(this).build();
+            playerView.setPlayer(player);
+        }
 
         /*
          * Creating service object
@@ -106,8 +125,11 @@ public class MainActivity extends ElitePoseActivity {
      * */
     @Override
     public double getCurrentTime() {
-        if (tracker != null) {
+        if (useYoutube && tracker != null) {
             return tracker.getCurrentSecond();
+        }
+        if (!useYoutube && player != null) {
+            return player.getCurrentPosition() / 1000d;
         }
         return 0;
     }
@@ -117,8 +139,11 @@ public class MainActivity extends ElitePoseActivity {
      * */
     @Override
     public boolean isVideoPlaying() {
-        if (tracker != null) {
+        if (useYoutube && tracker != null) {
             return (tracker.getState() == PlayerConstants.PlayerState.PLAYING);
+        }
+        if (!useYoutube && player != null) {
+            return player.isPlaying();
         }
         return false;
     }
@@ -154,18 +179,29 @@ public class MainActivity extends ElitePoseActivity {
         service.getVideoById(videoId, new IDataResponse<Video>() {
             @Override
             public void onSuccess(Video response) {
-
-               /*
-                * Create a new workout session and start the workout
-                * */
+                if (useYoutube) {
+                    youTubePlayerView.getYouTubePlayerWhenReady(player -> {
+                        player.loadVideo(response.getEmbedId(), 0);
+                        youTubePlayer = player;
+                        tracker = new YouTubePlayerTracker();
+                        youTubePlayer.addListener(tracker);
+                    });
+                }
+                else {
+                    try {
+                        MediaItem mediaItem = MediaItem.fromUri(VIDEO_URL);
+                        player.setMediaItem(mediaItem);
+                        player.prepare();
+                        player.play();
+                    }
+                    catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                }
+                /*
+                 * Create a new workout session and start the workout
+                 * */
                 createSession(response);
-
-                youTubePlayerView.getYouTubePlayerWhenReady(player -> {
-                    player.loadVideo(response.getEmbedId(), 0);
-                    youTubePlayer = player;
-                    tracker = new YouTubePlayerTracker();
-                    youTubePlayer.addListener(tracker);
-                });
             }
 
             @SuppressLint("SetTextI18n")

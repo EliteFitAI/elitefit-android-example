@@ -22,10 +22,18 @@
     <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
         android:id="@+id/youtube_player_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="240dp"
+        android:visibility="gone"
         app:showFullScreenButton="false"
         app:showYouTubeButton="false"
         app:autoPlay="false" />
+
+    <com.google.android.exoplayer2.ui.StyledPlayerView
+        android:id="@+id/exo_player"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        app:show_buffering="when_playing" />
 
     <RelativeLayout
         android:layout_width="match_parent"
