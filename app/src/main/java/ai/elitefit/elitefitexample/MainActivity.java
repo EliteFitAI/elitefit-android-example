@@ -2,6 +2,7 @@ package ai.elitefit.elitefitexample;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -34,14 +35,14 @@ public class MainActivity extends ElitePoseActivity {
     private YouTubePlayerView youTubePlayerView;
     private YouTubePlayerTracker tracker;
 
-    private ExoPlayer player;
-    private StyledPlayerView playerView;
+    private ExoPlayer exoPlayer;
+    private StyledPlayerView exoPlayerView;
 
     /**
      * Add your API_KEY & API_SECRET
      * */
-    private final String API_KEY = "";
-    private final String API_SECRET = "";
+    private final String API_KEY = "A4WQDH4-1JQMD4S-KJMK27J-XZZBEMA";
+    private final String API_SECRET = "513976c4-0caf-4693-9ca9-311eeffeb751";
     private final String API_URL = "https://elitefitforyou.com/api/";
 
     /**
@@ -50,7 +51,13 @@ public class MainActivity extends ElitePoseActivity {
     private final int VIDEO_ID = 2393;
     private final String VIDEO_URL = "https://s3.ap-southeast-1.amazonaws.com/www.elitefit.ai/Ice+Skaters.mp4";
 
-    private final boolean useYoutube = true;
+    private final boolean useYoutube = false;
+
+    private Handler handler;
+    private Runnable runnable;
+
+    private double currentPosition = 0;
+    private boolean isPlaying = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,10 +80,20 @@ public class MainActivity extends ElitePoseActivity {
             getLifecycle().addObserver(youTubePlayerView);
         }
         else {
-            playerView = findViewById(R.id.exo_player);
-            playerView.setVisibility(View.VISIBLE);
-            player = new ExoPlayer.Builder(this).build();
-            playerView.setPlayer(player);
+            exoPlayerView = findViewById(R.id.exo_player);
+            exoPlayerView.setVisibility(View.VISIBLE);
+            exoPlayer = new ExoPlayer.Builder(this).build();
+            exoPlayerView.setPlayer(exoPlayer);
+
+            handler = new Handler();
+            runnable = () -> {
+                if (exoPlayer != null) {
+                    currentPosition = exoPlayer.getContentPosition() / 1000d;
+                    isPlaying = exoPlayer.isPlaying();
+                }
+                handler.postDelayed(runnable, 50);
+            };
+            handler.postDelayed(runnable, 0);
         }
 
         /*
@@ -128,8 +145,8 @@ public class MainActivity extends ElitePoseActivity {
         if (useYoutube && tracker != null) {
             return tracker.getCurrentSecond();
         }
-        if (!useYoutube && player != null) {
-            return player.getCurrentPosition() / 1000d;
+        if (!useYoutube) {
+            return currentPosition;
         }
         return 0;
     }
@@ -142,8 +159,8 @@ public class MainActivity extends ElitePoseActivity {
         if (useYoutube && tracker != null) {
             return (tracker.getState() == PlayerConstants.PlayerState.PLAYING);
         }
-        if (!useYoutube && player != null) {
-            return player.isPlaying();
+        if (!useYoutube) {
+            return isPlaying;
         }
         return false;
     }
@@ -190,9 +207,9 @@ public class MainActivity extends ElitePoseActivity {
                 else {
                     try {
                         MediaItem mediaItem = MediaItem.fromUri(VIDEO_URL);
-                        player.setMediaItem(mediaItem);
-                        player.prepare();
-                        player.play();
+                        exoPlayer.setMediaItem(mediaItem);
+                        exoPlayer.prepare();
+                        exoPlayer.play();
                     }
                     catch (Exception e) {
                         Log.e(TAG, e.getMessage());
