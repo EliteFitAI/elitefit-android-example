@@ -10,14 +10,14 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
-import ai.elitefit.pose.ElitePoseActivity;
+import ai.elitefit.pose.ElitePoseMLKitActivity;
 import ai.elitefit.pose.models.AccessTokenResponse;
 import ai.elitefit.pose.models.UploadPoseResponse;
 import ai.elitefit.pose.models.Video;
 import ai.elitefit.pose.services.IDataResponse;
 import ai.elitefit.pose.services.OperatorService;
 
-public class MainActivity extends ElitePoseActivity {
+public class MainActivity extends ElitePoseMLKitActivity {
 
     private final String TAG = "MainActivity";
     private OperatorService service;
@@ -155,9 +155,9 @@ public class MainActivity extends ElitePoseActivity {
             @Override
             public void onSuccess(Video response) {
 
-               /*
-                * Create a new workout session and start the workout
-                * */
+                /*
+                 * Create a new workout session and start the workout
+                 * */
                 createSession(response);
 
                 youTubePlayerView.getYouTubePlayerWhenReady(player -> {
